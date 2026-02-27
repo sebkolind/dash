@@ -1,99 +1,14 @@
 #!/bin/bash
 
-# ─── Colors & Symbols ────────────────────────────────────────────────
-R='\033[0m'
-DIM='\033[2m'
-BOLD='\033[1m'
-CYAN='\033[36m'
-GREEN='\033[32m'
-YELLOW='\033[33m'
-MAGENTA='\033[35m'
-BLUE='\033[34m'
-RED='\033[31m'
-WHITE='\033[37m'
-
-# ─── Helpers ──────────────────────────────────────────────────────────
-section() {
-  echo ""
-  echo -e "  ${BOLD}${CYAN}$1${R}"
-}
-
-row() {
-  printf "  ${DIM}%-14s${R} %b\n" "$1" "$2"
-}
-
-empty_state() {
-  echo -e "  ${DIM}$1${R}"
-}
-
-# ─── Header
 clear
-echo ""
-echo -e "${BOLD}${MAGENTA}  ┌─┐┌─┐┌┐ ┬┌─┌─┐┬  ┬┌┐┌┌┬┐${R}"
-echo -e "${BOLD}${MAGENTA}  └─┐├┤ ├┴┐├┴┐│ ││  ││││ ││${R}"
-echo -e "${BOLD}${MAGENTA}  └─┘└─┘└─┘┴ ┴└─┘┴─┘┴┘└┘─┴┘${R}"
-echo ""
 
-# Check for dependencies
-for cmd in gh acli jq; do
-  if ! command -v "$cmd" &> /dev/null; then
-    echo "Missing dependency: $cmd"
-    exit 1
-  fi
-done
+source ./lib/colors.sh
+source ./lib/helpers.sh
 
-# ─── My Open PRs
-section "🦾  My Pull Requests"
+source ./lib/header.sh
 
-prs=$(gh search prs --author=@me --state=open --json number,title,repository --limit 5 2>/dev/null)
+source ./plugins/pull-requests.sh
+source ./plugins/review-pull-requests.sh
+source ./plugins/jira.sh
 
-if [ -z "$prs" ] || [ "$prs" = "[]" ]; then
-  empty_state "No open PRs—go ship something!"
-else
-  echo "$prs" | jq -r '.[] | "\(.number)|\(.title)|\(.repository.nameWithOwner)"' 2>/dev/null | while IFS='|' read -r number title nwo; do
-    title=$(echo "$title" | head -c 34)
-    repo="${nwo##*/}"
-    printf "  ${BLUE}#%-5s${R} %-34s ${DIM}%s${R}\n" "$number" "$title" "$repo"
-  done
-fi
-
-# ─── PRs to Review
-section "👀  Review Requests"
-
-review_prs=$(gh search prs --review-requested=@me --state=open --json number,title,repository,author --limit 5 2>/dev/null)
-
-if [ -z "$review_prs" ] || [ "$review_prs" = "[]" ]; then
-  empty_state "No reviews waiting—inbox zero!"
-else
-  echo "$review_prs" | jq -r '.[] | "\(.number)|\(.title)|\(.repository.name)"' 2>/dev/null | while IFS='|' read -r number title repo; do
-    title=$(echo "$title" | head -c 34)
-    printf "  ${BLUE}#%-5s${R} %-34s ${DIM}%s\n" "$number" "$title" "$repo"
-  done
-fi
-
-# ─── Jira
-section "📋  Jira"
-
-jira_items=$(acli jira workitem search --jql "assignee = currentUser() AND status in ('In Progress', 'Test', 'Selected for Dev', 'On Deck', 'Blocked')" --fields "key,summary,status" --limit 5 --json 2>/dev/null)
-
-if [ -z "$jira_items" ] || [ "$jira_items" = "[]" ]; then
-  empty_state "Nothing assigned to you—pick up a ticket!"
-else
-  echo "$jira_items" | jq -r '.[] | "\(.key)|\(.fields.summary)|\(.fields.status.name)"' 2>/dev/null | while IFS='|' read -r key summary status; do
-    summary=$(echo "$summary" | head -c 34)
-    case "$status" in
-      "In Progress")       badge="${YELLOW}● in progress${R}" ;;
-      "Test")              badge="${CYAN}◎ test${R}" ;;
-      "Selected for Dev")  badge="${BLUE}◆ selected${R}" ;;
-      "On Deck")           badge="${DIM}○ on deck${R}" ;;
-      "Blocked")           badge="${RED}✗ blocked${R}" ;;
-      *)                   badge="${DIM}○ ${status}${R}" ;;
-    esac
-    printf "  ${MAGENTA}%-7s${R} %-34s %b\n" "$key" "$summary" "$badge"
-  done
-fi
-
-# ─── Footer ───────────────────────────────────────────────────────────
-echo ""
-echo -e "  ${DIM}$(date '+%A, %B %d · %H:%M')${R}"
-echo ""
+source ./lib/footer.sh

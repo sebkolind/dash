@@ -1,0 +1,5 @@
+echo ""
+echo -e "${BOLD}${MAGENTA}  ┌┬┐┌─┐┌─┐┬ ┬${R}"
+echo -e "${BOLD}${MAGENTA}   ││├─┤└─┐├─┤${R}"
+echo -e "${BOLD}${MAGENTA}  ─┴┘┴ ┴└─┘┴ ┴${R}"
+echo ""
