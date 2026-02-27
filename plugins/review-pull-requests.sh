@@ -1,6 +1,6 @@
 section "👀  Review Requests"
 
-check_dependencies gh
+check_dependencies gh jq
 
 review_prs=$(gh search prs --review-requested=@me --state=open --json number,title,repository,author --limit 5 2>/dev/null)
 

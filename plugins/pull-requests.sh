@@ -1,6 +1,6 @@
 section "🦾  My Pull Requests"
 
-check_dependencies gh
+check_dependencies gh jq
 
 prs=$(gh search prs --author=@me --state=open --json number,title,repository --limit 5 2>/dev/null)
 

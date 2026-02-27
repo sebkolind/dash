@@ -1,6 +1,6 @@
 section "📋  Jira"
 
-check_dependencies acli
+check_dependencies acli jq
 
 # TODO: Make statuses configurable
 jira_items=$(acli jira workitem search --jql "assignee = currentUser() AND status in ('In Progress', 'Test', 'Selected for Dev', 'On Deck', 'Blocked')" --fields "key,summary,status" --limit 5 --json 2>/dev/null)
