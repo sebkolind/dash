@@ -13,14 +13,9 @@ RED='\033[31m'
 WHITE='\033[37m'
 
 # ─── Helpers ──────────────────────────────────────────────────────────
-divider() {
-  echo -e "${DIM}$(printf '%.0s─' {1..56})${R}"
-}
-
 section() {
   echo ""
   echo -e "  ${BOLD}${CYAN}$1${R}"
-  divider
 }
 
 row() {
@@ -31,56 +26,50 @@ empty_state() {
   echo -e "  ${DIM}$1${R}"
 }
 
-# ─── Header ───────────────────────────────────────────────────────────
+# ─── Header
 clear
 echo ""
 echo -e "${BOLD}${MAGENTA}  ┌─┐┌─┐┌┐ ┬┌─┌─┐┬  ┬┌┐┌┌┬┐${R}"
 echo -e "${BOLD}${MAGENTA}  └─┐├┤ ├┴┐├┴┐│ ││  ││││ ││${R}"
 echo -e "${BOLD}${MAGENTA}  └─┘└─┘└─┘┴ ┴└─┘┴─┘┴┘└┘─┴┘${R}"
 echo ""
-divider
 
-# ─── My Open PRs ─────────────────────────────────────────────────────
+# ─── My Open PRs
 section "⬡  My Pull Requests"
 
-prs=$(gh pr list --author="@me" --json number,title,reviewDecision --limit 5 2>/dev/null)
+prs=$(gh search prs --author=@me --state=open --json number,title,repository --limit 5 2>/dev/null)
 
 if [ -z "$prs" ] || [ "$prs" = "[]" ]; then
-  empty_state "No open PRs — go ship something!"
+  empty_state "No open PRs—go ship something!"
 else
-  echo "$prs" | jq -r '.[] | "\(.number)|\(.title)|\(.reviewDecision)"' 2>/dev/null | while IFS='|' read -r number title decision; do
+  echo "$prs" | jq -r '.[] | "\(.number)|\(.title)|\(.repository.nameWithOwner)"' 2>/dev/null | while IFS='|' read -r number title nwo; do
     title=$(echo "$title" | head -c 34)
-    case "$decision" in
-      APPROVED)           badge="${GREEN}✓ approved${R}" ;;
-      CHANGES_REQUESTED)  badge="${RED}✗ changes${R}" ;;
-      REVIEW_REQUIRED)    badge="${YELLOW}● review${R}" ;;
-      *)                  badge="${DIM}○ pending${R}" ;;
-    esac
-    printf "  ${BLUE}#%-5s${R} %-34s %b\n" "$number" "$title" "$badge"
+    repo="${nwo##*/}"
+    printf "  ${BLUE}#%-5s${R} %-34s ${DIM}%s${R}\n" "$number" "$title" "$repo"
   done
 fi
 
-# ─── PRs to Review ────────────────────────────────────────────────────
+# ─── PRs to Review
 section "👀  Review Requests"
 
-review_prs=$(gh pr list --search "review-requested:@me" --json number,title,author --limit 5 2>/dev/null)
+review_prs=$(gh search prs --review-requested=@me --state=open --json number,title,repository,author --limit 5 2>/dev/null)
 
 if [ -z "$review_prs" ] || [ "$review_prs" = "[]" ]; then
-  empty_state "No reviews waiting — inbox zero!"
+  empty_state "No reviews waiting—inbox zero!"
 else
-  echo "$review_prs" | jq -r '.[] | "\(.number)|\(.title)|\(.author.login)"' 2>/dev/null | while IFS='|' read -r number title author; do
+  echo "$review_prs" | jq -r '.[] | "\(.number)|\(.title)|\(.repository.name)"' 2>/dev/null | while IFS='|' read -r number title repo; do
     title=$(echo "$title" | head -c 34)
-    printf "  ${BLUE}#%-5s${R} %-34s ${DIM}by %s${R}\n" "$number" "$title" "$author"
+    printf "  ${BLUE}#%-5s${R} %-34s ${DIM}%s\n" "$number" "$title" "$repo"
   done
 fi
 
-# ─── Jira ─────────────────────────────────────────────────────────────
+# ─── Jira
 section "📋  Jira"
 
 jira_items=$(acli jira workitem search --jql "assignee = currentUser() AND status in ('In Progress', 'Test', 'Selected for Dev', 'On Deck', 'Blocked')" --fields "key,summary,status" --limit 5 --json 2>/dev/null)
 
 if [ -z "$jira_items" ] || [ "$jira_items" = "[]" ]; then
-  empty_state "Nothing assigned to you — pick up a ticket!"
+  empty_state "Nothing assigned to you—pick up a ticket!"
 else
   echo "$jira_items" | jq -r '.[] | "\(.key)|\(.fields.summary)|\(.fields.status.name)"' 2>/dev/null | while IFS='|' read -r key summary status; do
     summary=$(echo "$summary" | head -c 34)
