@@ -34,6 +34,14 @@ echo -e "${BOLD}${MAGENTA}  └─┐├┤ ├┴┐├┴┐│ ││  ││
 echo -e "${BOLD}${MAGENTA}  └─┘└─┘└─┘┴ ┴└─┘┴─┘┴┘└┘─┴┘${R}"
 echo ""
 
+# Check for dependencies
+for cmd in gh acli jq; do
+  if ! command -v "$cmd" &> /dev/null; then
+    echo "Missing dependency: $cmd"
+    exit 1
+  fi
+done
+
 # ─── My Open PRs
 section "🦾  My Pull Requests"
 
