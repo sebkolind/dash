@@ -2,13 +2,12 @@
 
 clear
 
+source ./lib/const.sh
 source ./lib/colors.sh
 source ./lib/helpers.sh
 
+source ./lib/config.sh
 source ./lib/header.sh
-
-source ./plugins/pull-requests.sh
-source ./plugins/review-pull-requests.sh
-source ./plugins/jira.sh
-
 source ./lib/footer.sh
+
+source ./lib/plugins.sh

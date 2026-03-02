@@ -20,3 +20,7 @@ check_dependencies() {
     fi
   done
 }
+
+debug() {
+  [[ "$DEV" == true ]] && printf "${BLUE}[debug]${R} ${DIM}%s${R}" "$1"
+}
