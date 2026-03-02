@@ -12,6 +12,16 @@ load_config() {
   fi
 }
 
+# No plugins configured
+if [[ "${#D_PLUGINS[@]}" -eq 0 ]]; then
+  echo ""
+  printf "  You have no plugins configured. Available plugins:\n"
+  printf "  ${BLUE}Jira${R} (jira), ${BLUE}GitHub${R} (pull-requests & review-pull-requests).\n\n"
+  printf "  You can configure plugins by adding them to your ${BLUE}D_PLUGINS${R} array in your config file.\n"
+  printf "  Your config file is located at: ${CONFIG_DIR}/config.sh.\n"
+  return
+fi
+
 # Load plugins
 for plugin in "${D_PLUGINS[@]}"; do
   load_config "$plugin"
