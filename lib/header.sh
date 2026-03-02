@@ -9,7 +9,9 @@ if [ "$D_HEADER_LOGO" = true ]; then
   echo ""
 fi
 
-
 if [ "$D_HEADER_META" = true ]; then
-  printf "  ${DIM}Plugins: ${#D_PLUGINS[@]}${R}\n"
+  meta="  "
+  meta+="${DIM}Plugins:${R} ${BOLD}${CYAN}${#D_PLUGINS[@]}${R}"
+  meta+="${DIM} ∙ Cache:${R} ${BOLD}${CYAN}${D_CACHE_TTL}s${R}"
+  printf "${meta}\n"
 fi
