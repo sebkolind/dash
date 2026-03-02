@@ -8,6 +8,7 @@ source ./lib/helpers.sh
 
 source ./lib/config.sh
 source ./lib/header.sh
-source ./lib/footer.sh
 
 source ./lib/plugins.sh
+
+source ./lib/footer.sh
