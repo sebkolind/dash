@@ -14,4 +14,6 @@ fi
 chmod +x "${INSTALL_DIR}/bin/ds"
 ln -sf "${INSTALL_DIR}/bin/ds" "${HOME}/bin/ds"
 
-echo "Done! Run 'ds' to get started."
+GREEN='\033[0;32m'
+R='\033[0m'
+printf "\n${GREEN}Done! Run 'ds' to get started.${R}\n"
