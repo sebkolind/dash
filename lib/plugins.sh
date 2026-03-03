@@ -48,5 +48,5 @@ fi
 # Load plugins.
 for plugin in "${D_PLUGINS[@]}"; do
   load_config "$plugin"
-  source "./plugins/$plugin.sh"
+  source "${DIR}/plugins/$plugin.sh"
 done
