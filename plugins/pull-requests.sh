@@ -1,4 +1,4 @@
-section "🦾  My Pull Requests"
+section "🦾 My Pull Requests"
 
 check_dependencies gh jq
 

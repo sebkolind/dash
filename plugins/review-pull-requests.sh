@@ -1,4 +1,4 @@
-section "👀  Review Requests"
+section "👀 Review Requests"
 
 check_dependencies gh jq
 

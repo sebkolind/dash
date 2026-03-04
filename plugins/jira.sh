@@ -1,4 +1,4 @@
-section "📋  Jira"
+section "🎯 Jira"
 
 check_dependencies acli jq
 

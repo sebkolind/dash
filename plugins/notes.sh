@@ -5,7 +5,7 @@
 # $NOTES_LIMIT (Optional) - Default: 5. The amount of notes shown.
 #
 
-section "📝  Notes"
+section "📝 Notes"
 
 if [[ -z "$NOTES_DIR" ]]; then
   empty_state "No notes directory configured. Set NOTES_DIR in your config."
