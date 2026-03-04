@@ -1,15 +1,3 @@
-spinner() {
-  local pid=$1
-  local chars="⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
-  while kill -0 "$pid" 2>/dev/null; do
-    for (( i=0; i<${#chars}; i++ )); do
-      printf "\r  ${DIM}${chars:$i:1} Loading...${R}"
-      sleep 0.1
-    done
-  done
-  printf "\r\033[K"
-}
-
 section() {
   echo ""
   echo -e "  ${BOLD}${CYAN}$1${R}"
