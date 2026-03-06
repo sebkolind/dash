@@ -12,3 +12,6 @@ D_HEADER_META=true
 
 # Whether to show the footer. Default: true
 D_FOOTER=true
+
+# Default watch interval in seconds. Default: 30
+D_WATCH_INTERVAL=30

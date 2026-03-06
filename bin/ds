@@ -4,9 +4,6 @@ DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)/.."
 
 source "${DIR}/lib/commands.sh"
 
-clear
-echo ""
-
 source "${DIR}/lib/const.sh"
 source "${DIR}/lib/colors.sh"
 source "${DIR}/lib/helpers.sh"
@@ -14,8 +11,36 @@ source "${DIR}/lib/helpers.sh"
 source "${DIR}/lib/defaults.sh"
 source "${DIR}/lib/config.sh"
 
-source "${DIR}/lib/header.sh"
+render_dashboard() {
+  clear
+  echo ""
 
-source "${DIR}/lib/plugins.sh"
+  source "${DIR}/lib/header.sh"
+  source "${DIR}/lib/plugins.sh"
+  source "${DIR}/lib/footer.sh"
+}
 
-source "${DIR}/lib/footer.sh"
+# Handle watch mode
+if [ "$WATCH_MODE" = true ]; then
+  # Force fresh fetches in watch mode
+  D_CACHE_TTL=0
+
+  # Use provided interval or default
+  interval="${WATCH_INTERVAL:-$D_WATCH_INTERVAL}"
+
+  # Cleanup on exit
+  cleanup() {
+    clear
+    exit 0
+  }
+  trap cleanup INT TERM
+
+  # Continuous refresh loop
+  while true; do
+    render_dashboard
+    sleep "$interval"
+  done
+else
+  # Single render
+  render_dashboard
+fi
